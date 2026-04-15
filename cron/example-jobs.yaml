@@ -1,0 +1,156 @@
+# Example Cron Job Configurations
+
+Example cron job patterns for the Hermes Team Framework. Copy and customize these for your own scheduled tasks.
+
+---
+
+## Time Format
+
+All times in this file use 4-digit local time (Central time example). The cron system internally converts to UTC — when you specify a time, it's your local time.
+
+| Format | Meaning |
+|--------|---------|
+| `0100` | 1:00 AM |
+| `0700` | 7:00 AM |
+| `1300` | 1:00 PM |
+| `1430` | 2:30 PM |
+
+---
+
+## Example Jobs
+
+These are illustrative examples — adapt for your own agents, skills, and projects.
+
+### Competitive Intelligence Job
+
+```yaml
+name: competitive-intelligence
+description: Morning competitive analysis scan
+schedule: "0 7 * * *"        # 7:00 AM local time
+deliver: telegram            # or: origin, local, discord, etc.
+model: your-model-choice
+provider: your-provider
+skills:
+  - fresh-aire               # loads Microsoft Copilot domain knowledge
+skills_priority: []          # skill loading order
+retry:
+  max_attempts: 3
+  backoff: exponential
+notification:
+  on_failure: true
+  on_success: false
+enabled: true
+```
+
+### Knowledge Base Health Check
+
+```yaml
+name: kb-health-check
+description: Verify knowledge base integrity and refresh stale entries
+schedule: "0 6 * * *"        # 6:00 AM local time
+deliver: origin              # back to the session that scheduled it
+model: your-model-choice
+provider: your-provider
+skill: markdown-kb           # single skill attachment example
+retry:
+  max_attempts: 2
+  backoff: linear
+notification:
+  on_failure: true
+  on_success: false
+enabled: true
+```
+
+### Recurring Analysis Job (Repeating)
+
+```yaml
+name: recurring-analysis
+description: Run multi-agent analysis on a recurring schedule
+schedule: "0 */4 * * *"      # every 4 hours — adjust to your window
+deliver: origin
+model: your-model-choice
+provider: your-provider
+repeat: forever              # vs. "once" for one-time jobs
+retry:
+  max_attempts: 3
+  backoff: exponential
+notification:
+  on_failure: true
+  on_success: false
+enabled: true
+```
+
+---
+
+## Key Fields
+
+| Field | Options | What it does |
+|-------|---------|--------------|
+| `schedule` | cron expression | When to run. "0 7 * * *" = 7:00 AM daily |
+| `deliver` | origin, local, telegram, discord, etc. | Where output goes |
+| `model` | your model | Override default model for this job |
+| `provider` | your provider | Override default provider |
+| `skill` / `skills` | skill name(s) | Domain knowledge loaded at job start |
+| `repeat` | once, forever, or number | Job repetition pattern |
+| `enabled` | true/false | Whether the job runs |
+
+---
+
+## Delivery Targets
+
+| Target | Where output goes |
+|--------|------------------|
+| `origin` | The session that scheduled the job |
+| `local` | Local files only (~/.hermes/cron/output/) |
+| `telegram` | Telegram home channel |
+| `discord` | Discord (requires webhook URL) |
+| `email` | Email (requires email tool configured) |
+
+---
+
+## Skills Attachment
+
+Attach skills to give the agent domain context at job start:
+
+```yaml
+# Single skill
+skill: fresh-aire
+
+# Multiple skills — loaded in order
+skills:
+  - fresh-aire
+  - markdown-kb
+```
+
+Skills load before the job's main prompt, giving the agent the knowledge it needs to execute.
+
+---
+
+## Scheduling Rules
+
+**Within your operational window:**
+- Schedule jobs between 12:00 AM and 6:00 AM local time
+- Jobs outside this window may run but aren't guaranteed
+
+**Avoid overlap:**
+- Don't schedule jobs that run simultaneously if they compete for the same resources
+- If running multiple agent-based jobs, stagger by at least 30 minutes
+
+**One-time vs. repeating:**
+- `repeat: once` — runs once and completes
+- `repeat: forever` — runs on schedule until disabled
+- `repeat: 5` — runs 5 times and completes
+
+---
+
+## Customizing for Your Setup
+
+1. **Copy the examples** that match your job type
+2. **Set your time** — use 4-digit local time
+3. **Set your deliver target** — where you want output delivered
+4. **Attach relevant skills** — give the agent domain context
+5. **Test manually** — run once with `mcp_cronjob(action='run')` to verify before going to production schedule
+
+---
+
+*Adapt these examples for your own agent team and scheduled tasks.*
