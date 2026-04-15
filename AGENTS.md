@@ -109,6 +109,62 @@ The Overview is the identity. The Memory is the manual.
 
 Add the agent to `~/.hermes/agent-logs/INDEX.md` with their name, role, and one-line description.
 
+### Step 6: Technical Setup (required — no exceptions)
+
+Two things must be configured before the agent can receive work via `call_agent`:
+
+#### API Credentials
+
+Each agent profile needs MiniMax API access. Without credentials, every API call fails with `Authorization: Bearer None`.
+
+```bash
+# 1. Copy .env with the API key from an existing agent
+cp ~/.hermes/profiles/shel/.env ~/.hermes/profiles/<new_agent>/.env
+
+# 2. Load credentials into auth.json
+cd ~/.hermes/profiles/<new_agent>
+HERMES_HOME=~/.hermes/profiles/<new_agent> hermes auth list
+
+# 3. Verify
+hermes auth list
+# Should show: minimax (1 credentials): #1  MINIMAX_API_KEY  api_key  env:MINIMAX_API_KEY
+```
+
+#### Unique API Server Port
+
+Each agent's `config.yaml` must have a unique `api_server.extra.port`. Port conflicts cause `call_agent` to route to the wrong agent.
+
+Check currently in-use ports:
+```bash
+ss -tlnp | grep python3 | grep -oP "127.0.0.1:\K\d+"
+```
+
+Ports currently assigned: 8643=shel, 8644=shoshin, 8645=yuval, 8646=korg, 8647=chase, 8648=alif, 8649=satya.
+
+Update `config.yaml`:
+```yaml
+platforms:
+  api_server:
+    enabled: true
+    extra:
+      port: <UNIQUE_PORT>
+```
+
+#### Start the gateway
+
+```bash
+cd ~/.hermes/profiles/<new_agent>
+HERMES_HOME=~/.hermes/profiles/<new_agent> hermes gateway run &
+```
+
+#### Verify
+
+```python
+from tools.call_agent_tool import call_agent
+result = call_agent(agent_name='<new_agent>', goal='Reply with just your name.', max_tokens=50)
+# Should return the agent's own name, not another agent's name
+```
+
 ---
 
 ## How Agents Work Together
