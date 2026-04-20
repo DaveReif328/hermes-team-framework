@@ -33,25 +33,13 @@ A productive agent team has these properties:
 
 ---
 
-## The Agents Directory
-
-The `agents/` directory contains templates for building agent SKILL.md files. Each template shows:
-- The YAML frontmatter structure
-- What sections an SKILL.md needs
-- How to write the agent's role, competencies, output format, and pause phrases
-- How to document the agent's interaction with the rest of the team
-
-Copy a template, fill in your agent's specifics, and register it in your agent-logs INDEX.
-
----
-
 ## Quick Start
 
 1. **Clone into your Hermes configuration** — typically `~/.hermes/`
 2. **Read AGENTS.md** — understand the pattern for building agent teams
-3. **Copy agents/ templates** — create your SKILL.md files for your roster
-4. **Create your knowledge bases** — use `knowledge-bases/TEMPLATE.md` as the pattern
-5. **Define your workflows** — use the configurations in `learning/agent-tuning-notes.md`
+3. **Copy `templates/project/`** to start a new project (`cp -r templates/project ~/.hermes/team/projects/your-project`)
+4. **Define your agents** — copy `agents/TEMPLATE-*.md` files and fill in specifics
+5. **Create your knowledge bases** — use `knowledge-bases/TEMPLATE.md` as the pattern
 6. **Deploy** — run `deploy/setup.sh` on your target Hermes install
 
 ---
@@ -59,44 +47,98 @@ Copy a template, fill in your agent's specifics, and register it in your agent-l
 ## Directory Structure
 
 ```
-hermes-team/
+hermes-team-framework/
 ├── README.md              — This file
 ├── AGENTS.md              — Pattern for building your agent team
 ├── SKILLS.md              — Skills framework (capability taxonomy)
 ├── SCRIPTS.md             — Operational scripts reference
+├── CHANGELOG.md           — Version history
+│
 ├── agents/
 │   ├── TEMPLATE-skills.md — Pattern for a SKILL.md file
 │   ├── TEMPLATE-overview.md — Pattern for agent overview
 │   └── TEMPLATE-memory.md   — Pattern for agent memory
+│
+├── templates/
+│   ├── project/           — Ready-to-copy project scaffold
+│   │   ├── project.yaml    — Agent roster and config
+│   │   ├── SOUL.md         — Project identity
+│   │   ├── workflows/      — DAG task definitions
+│   │   ├── scripts/        — dag-run.sh, health-check.sh
+│   │   ├── config/         — delegation.yaml, profiles.yaml
+│   │   ├── kb/             — Project knowledge base files
+│   │   ├── agents/         — Agent skill files
+│   │   └── .context/       — Pool, artifacts, decisions
+│   │
+│   └── job-template.md     — Cron job pattern
+│
 ├── knowledge-bases/
 │   └── TEMPLATE.md        — Pattern for project knowledge bases
+│
 ├── commands/
 │   └── INTERNAL.md        — Internal command conventions
-├── learning/
-│   └── agent-tuning-notes.md  — Patterns that work, anti-patterns
-├── templates/
-│   └── job-template.md    — Cron job pattern
+│
 ├── cron/
 │   └── example-jobs.yaml  — Example job configurations
+│
+├── learning/
+│   └── agent-tuning-notes.md — Patterns that work, anti-patterns
+│
 └── deploy/
     └── setup.sh           — Deploy script template
 ```
 
 ---
 
-## What to Customize
+## The Project Scaffold (`templates/project/`)
 
-When you deploy this framework for your own work:
+Copy this entire directory to start a new project:
+
+```bash
+cp -r templates/project ~/.hermes/team/projects/your-project-name
+```
+
+Then customize:
+- `project.yaml` — add your agents, their roles, API ports
+- `SOUL.md` — define your project's identity and goals
+- `workflows/dag.yaml` — define tasks and dependencies
+- `kb/` files — fill in your project specifics
+- `agents/` — copy TEMPLATE-skills.md for each agent
+
+The `scripts/health-check.sh` verifies the scaffold is complete.
+
+---
+
+## What to Customize
 
 | File | What to change |
 |------|---------------|
 | `agents/*-TEMPLATE*.md` | Copy to new name, fill in your agent specifics |
+| `templates/project/project.yaml` | Add your agent roster, API ports, capabilities |
+| `templates/project/SOUL.md` | Define your project identity |
 | `knowledge-bases/TEMPLATE.md` | Rename for your project, fill in context |
 | `cron/example-jobs.yaml` | Copy and customize for your scheduled tasks |
 | `learning/agent-tuning-notes.md` | Add your own findings as you learn |
 
 ---
 
+## Agent Communication
+
+Agents talk to each other via `call_agent()`:
+
+```python
+from tools.call_agent_tool import call_agent
+result = call_agent(agent_name='shel', goal='What tires fit a 1999 Litespeed?', max_tokens=200)
+```
+
+Or asynchronously via shared pool files:
+```
+.context/pool/{agent-name}.md   # each agent's current work/notes
+```
+
+---
+
 ## Version
 
-**1.0** — Pattern version, 2026-04-14. Adapt this framework for your own agent team.
+**1.1** — Added project scaffold template (`templates/project/`), 2026-04-20.
+**1.0** — Pattern version, 2026-04-14.

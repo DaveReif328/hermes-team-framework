@@ -1,0 +1,33 @@
+name: template-project
+created: YYYY-MM-DD
+description: Team project template — copy and customize
+version: 0.1.0
+
+agents:
+  - name: shel
+    role: bicycle-mechanic
+    profile: shel
+    api_server: http://127.0.0.1:8643
+    capabilities: [repair, parts-sourcing, build-advice, wheelbuilding]
+
+  - name: dave
+    role: owner-client
+    profile: draveone_bot
+    api_server: http://127.0.0.1:8642
+    capabilities: [purchasing, decisions, photography]
+
+communication:
+  level: L1
+  shared_dirs:
+    - .context/pool
+    - .context/artifacts
+  poll_interval: 30
+
+workflow:
+  dag_file: workflows/dag.yaml
+  state_file: .context/state.json
+
+resilience:
+  max_retries: 3
+  max_replans: 2
+  step_timeout: 300

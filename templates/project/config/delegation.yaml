@@ -1,0 +1,11 @@
+# Per-step toolset restrictions (optional)
+# Uncomment and customize to limit what each agent can do per step
+
+# steps:
+#   step-001:
+#     allowed_toolsets:
+#       - terminal
+#       - file
+#       - delegation
+#     blocked_toolsets:
+#       - browser

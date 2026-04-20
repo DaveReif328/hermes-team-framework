@@ -1,0 +1,22 @@
+# DAG — task dependency graph
+# ready_steps(completed) → spawn ready agents in parallel
+# → collect results → mark complete → repeat
+
+schema_version: "1.0"
+project: template-project
+
+steps: []
+
+# Step schema:
+# - id: unique-id              # e.g. step-001
+#   goal: ...                  # What needs to be done
+#   agent: shel                # Which agent (from project.yaml)
+#   needs: []                 # Step IDs this depends on
+#   toolset: delegation        # Optional: restrict tools
+#   timeout: 300              # Optional: seconds
+#   status: pending            # pending | in_progress | completed | failed
+#   retries: 0
+#   result: null
+#   created: YYYY-MM-DD
+#   updated: YYYY-MM-DD
+#   notes: ...

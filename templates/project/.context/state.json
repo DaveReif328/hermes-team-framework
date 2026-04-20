@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0",
+  "project": "template-project",
+  "created": "YYYY-MM-DD",
+  "updated": "YYYY-MM-DD",
+  "steps_completed": [],
+  "steps_failed": [],
+  "agents": {}
+}
