@@ -425,6 +425,48 @@ EOF
 }
 
 # =============================================================================
+# SYSTEMD SERVICES
+# =============================================================================
+
+install_systemd_services() {
+    log_info "Setting up systemd services..."
+
+    local systemd_src="${SCRIPT_DIR}/systemd"
+    if [[ ! -d "$systemd_src" ]]; then
+        log_debug "No systemd directory found, skipping service installation"
+        return 0
+    fi
+
+    # Check if running as root and systemd is available
+    if [[ $EUID -ne 0 ]]; then
+        log_warning "Not running as root — skipping systemd service installation"
+        log_info "To install services manually, run: sudo ${systemd_src}/install.sh"
+        return 0
+    fi
+
+    if ! command -v systemctl &>/dev/null; then
+        log_warning "systemd not available — skipping service installation"
+        return 0
+    fi
+
+    local agents="alif billy chase korg lathrop satya shel shoshin woz yuval"
+    local systemd_dir="/etc/systemd/system"
+
+    for agent in $agents; do
+        local svc="$systemd_dir/hermes-$agent.service"
+        sed "s/%i/$agent/g" "${systemd_src}/hermes-agent@.service" > "$svc"
+        log_debug "Installed $svc"
+    done
+
+    cp "${systemd_src}/hermes-team.target" "$systemd_dir/hermes-team.target"
+    log_debug "Installed hermes-team.target"
+
+    systemctl daemon-reload
+    log_success "Systemd services installed"
+    log_info "Run 'systemctl start hermes-team.target' to start all agents"
+}
+
+# =============================================================================
 # PERMISSIONS
 # =============================================================================
 
@@ -548,6 +590,7 @@ main() {
     setup_environment
     create_config_files
     create_utility_scripts
+    install_systemd_services
     set_permissions
     run_health_check || true
     print_summary

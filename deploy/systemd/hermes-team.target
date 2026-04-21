@@ -1,0 +1,6 @@
+[Unit]
+Description=Hermes Team Agent Gateway Target
+After=network.target
+
+[Install]
+WantedBy=multi-user.target

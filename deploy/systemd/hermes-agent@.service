@@ -1,0 +1,13 @@
+[Unit]
+Description=Hermes Team Agent - %i
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/root/.hermes/hermes-agent/venv/bin/hermes -p %i gateway run
+Restart=on-failure
+RestartSec=5s
+Environment="HERMES_HOME=/root/.hermes/profiles/%i"
+
+[Install]
+WantedBy=hermes-team.target

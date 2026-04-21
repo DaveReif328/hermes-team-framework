@@ -40,7 +40,29 @@ A productive agent team has these properties:
 3. **Copy `templates/project/`** to start a new project (`cp -r templates/project ~/.hermes/team/projects/your-project`)
 4. **Define your agents** — copy `agents/TEMPLATE-*.md` files and fill in specifics
 5. **Create your knowledge bases** — use `knowledge-bases/TEMPLATE.md` as the pattern
-6. **Deploy** — run `deploy/setup.sh` on your target Hermes install
+6. **Deploy** — run `deploy/setup.sh` on your target Hermes install (installs systemd services automatically)
+
+### Auto-Start on Boot
+
+After deploy, the team agent gateways start automatically on system boot:
+
+```bash
+systemctl start hermes-team.target    # start all agents now
+systemctl enable hermes-team.target   # start on boot
+systemctl status hermes-team.target   # check status
+
+# Individual agent control
+systemctl restart hermes-shel         # restart one agent
+journalctl -u hermes-satya -f        # view logs
+```
+
+For manual/semi-managed environments, use the standalone supervisor:
+```bash
+/usr/local/bin/hermes-team-ctl start   # start all agents
+hermes-team-ctl status                 # check status
+```
+
+Run `scripts/health-check.sh` before any team project to verify all agents are up.
 
 ---
 

@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.2] — 2026-04-21
+
+### Added
+- `deploy/systemd/` — systemd service files for auto-start and restart-on-failure
+  - `hermes-agent@.service` — template service unit (one per agent)
+  - `hermes-team.target` — groups all agents together
+  - `hermes-team-ctl.sh` — PIDfile-based supervisor for non-systemd environments
+  - `install.sh` — standalone install script
+- `deploy/systemd/install_systemd_services()` added to `deploy/setup.sh`
+- `templates/project/scripts/health-check.sh` now verifies agent gateway ports are up
+
+### Changed
+- Updated `README.md` with systemd auto-start instructions
+
+### Fixed
+- Team agent gateways no longer fail silently after session restart
+
+---
+
 ## [1.1] — 2026-04-20
 
 ### Added
