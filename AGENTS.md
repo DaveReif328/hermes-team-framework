@@ -28,9 +28,9 @@ The diversity is the product. If your agents would converge on the same answer w
 
 ---
 
-## The Seven Perspective Types
+## The Eight Perspective Types
 
-These are the analytical modes that tend to produce useful diversity. You don't need all seven — pick the ones that fit your work.
+These are the analytical modes that tend to produce useful diversity. You don't need all eight — pick the ones that fit your work.
 
 ### 1. Creative / Lateral (Shoshin pattern)
 **What it does:** Challenges assumptions, finds patterns across domains, asks first-principles questions when the team is stuck.
@@ -68,9 +68,11 @@ These are the analytical modes that tend to produce useful diversity. You don't 
 **Why it matters:** Most teams under-weight legal risk until it becomes a crisis. Legal perspective makes the exposure visible early.
 
 ### 8. Engineering / Technical (Woz pattern)
-**What it does:** Challenges whether proposed solutions actually work, finds root cause vs. symptoms, prioritizes correctness over impressiveness.
+**What it does:** Challenges whether proposed solutions actually work, finds root cause vs. symptoms, prioritizes correctness over impressiveness. Reads specs, code, and docs against stated requirements.
 
-**Why it matters:** Technical complexity that isn't justified by the problem is waste. Engineering perspective keeps solutions honest.
+**Why it matters:** Technical complexity that isn't justified by the problem is waste. Engineering perspective keeps solutions honest, and catches implementation drift between "what we said it does" and "what it actually does."
+
+> **Note (v1.3):** Woz was added in v1.3 as a first-class perspective type. Earlier docs listed Woz as an informal #8 footnote; it now belongs alongside the other seven. Engineering is not optional — without it, synthesis drifts into "what the team agreed it built" rather than "what actually shipped."
 
 ---
 
@@ -115,7 +117,7 @@ Two things must be configured before the agent can receive work via `call_agent`
 
 #### API Credentials
 
-Each agent profile needs MiniMax API access. Without credentials, every API call fails with `Authorization: Bearer None`.
+Each agent profile needs MiniMax API access. Without credentials, every API call fails with `Authorization: Bearer ***` failures and the dispatcher routes the call to a fallback.
 
 ```bash
 # 1. Copy .env with the API key from an existing agent
@@ -139,7 +141,9 @@ Check currently in-use ports:
 ss -tlnp | grep python3 | grep -oP "127.0.0.1:\K\d+"
 ```
 
-Ports currently assigned: 8643=shel, 8644=shoshin, 8645=yuval, 8646=korg, 8647=chase, 8648=alif, 8649=satya.
+Ports currently assigned (v1.3): 8643=shel, 8644=shoshin, 8645=yuval, 8646=korg, 8647=chase, 8648=alif, 8649=satya, 8650=woz, 8651=lathrop, 8652=billy.
+
+> **Why this matters (v1.3):** `call_agent` dispatches by port. Two agents sharing a port → silent fallback to whichever gateway won the bind race. Symptom: "agent replied but sounds like a different one." Always port-check before adding an agent.
 
 Update `config.yaml`:
 ```yaml
@@ -177,9 +181,10 @@ For a complex problem:
 2. **Historian** grounds it in precedent
 3. **Evaluator** ranks the options
 4. **Financial** stress-tests the economics
-5. **Synthesizer** produces the recommendation
+5. **Woz** (engineering) challenges whether the proposed solution actually works
+6. **Synthesizer** produces the recommendation
 
-Not every problem needs all five. Use the perspectives relevant to the question.
+Not every problem needs all six. Use the perspectives relevant to the question.
 
 ### Debate Configurations
 
@@ -199,6 +204,7 @@ Some agent combinations are particularly useful:
 | Financial + Evaluative | Economics + competitive position |
 | Creative + Historian | Challenge assumptions + historical precedent |
 | Engineering + Synthesizer | Technical honesty + actionable conclusion |
+| Engineering + Evaluative | "Will this work?" + "Should we?" — kills fantasy roadmaps |
 
 ---
 
@@ -212,8 +218,11 @@ Some agent combinations are particularly useful:
 
 **Don't let agents validate each other.** Each agent should be skeptical of the others, not supportive. Validation loops produce false consensus.
 
+**Don't ship engineering claims without Woz.** (v1.3 lesson) If a plan says "we'll add X" and no engineering review happened, X is a hope, not a commitment. Woz reads the spec against the code and the doc — without that check, synthesis can confidently recommend something the implementation can't deliver.
+
 ---
 
 ## Version
 
+**1.3** — Woz promoted to first-class perspective type; Lathrop cross-linked in roster; port map updated to 10 agents (added woz, lathrop, billy). 2026-06-25.
 **1.0** — Pattern version, 2026-04-14. Adapt for your own team.

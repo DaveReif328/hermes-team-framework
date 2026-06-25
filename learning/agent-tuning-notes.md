@@ -226,4 +226,63 @@ When you learn something new about your team, add it here:
 
 ---
 
+## Operational Lessons (April–June 2026)
+
+These are notes from running this framework in production for ~10 weeks. They're filed here as concrete examples of the template above.
+
+### Configuration Discovery: Port-binding fallback is silent
+
+**Date:** 2026-06-25
+**Context:** Adding a new agent profile, port 8648 already taken by Alif.
+**Observation:** `call_agent` routed the call to Alif instead of failing. Symptom looked like "agent replied but in a different voice."
+**Mechanism:** Two gateways binding the same port — the second loses, dispatcher silently falls back to whichever won. No error.
+**Conclusion:** Always port-check with `ss -tlnp | grep python3` before adding an agent. Promote "unique port" to a hard gate in Step 6.
+
+### Anti-pattern: Shipping engineering claims without Woz review
+
+**Date:** 2026-06-25
+**Context:** Sutter Health brief synthesized an "introduce Patient Advantage to BJ" recommendation that assumed Sutter's contact center team could absorb a new AI layer alongside the Allina merger integration.
+**What happened:** Synthesis sounded clean and the recommendation was confident. Woz reading caught that nothing in the brief verified the contact center team's actual bandwidth — the assumption was inherited, not validated.
+**Correction:** Engineering/Woz review is now step 5 in the standard pipeline, between Financial and Synthesizer. Anti-pattern formalized in AGENTS.md.
+
+### Configuration Discovery: Kything — presence bytes as a participation signal
+
+**Date:** 2026-05-20
+**Context:** Multi-agent team debates were producing long outputs but with shallow engagement from some agents.
+**Change:** Added a presence-bytes header (compact summary of who is engaged, who has dropped out) injected at the start of each synthesis pass. Added a `rate` field (1–5) the synthesizer gives each agent's contribution.
+**Result:** Synthesizer now sees who's checked out and can either prompt them or down-weight their input. Average rated contribution stays ≥3.5 in healthy sessions.
+**Conclusion:** Two `kything-prototype` helpers (`call_with_kything.py`, `eval_kything.py`) wrap the standard `call_agent` and a session-context loader injects presence at session start. Keep if average rating ≥3.5 AND presence bytes <600.
+
+### Configuration Discovery: Dream KB as end-of-day consolidation
+
+**Date:** 2026-05-15
+**Context:** Session search alone missed cross-session patterns — agents would rediscover the same lesson in slightly different forms.
+**Change:** Added a daily consolidation pass at `~/.hermes/kb/memory/dream/{YYYY-MM-DD}.md`. Each entry: decisions, unresolved items, things to remember. Replaces ad-hoc "let me search" with curated follow-up.
+**Result:** Recurring problems now have a canonical writeup. New agents reading the dream KB inherit context that would otherwise need to be re-explained.
+**Conclusion:** `dream-protocol` skill — read dream KB at session start, write at session end. The session DB carries *what was said*; dream KB carries *what was learned*.
+
+### Anti-pattern: Subagent delegation via `delegate_task` returning 401s
+
+**Date:** 2026-06-12
+**Context:** Parallel research workstreams were failing silently when delegated via `delegate_task`.
+**What happened:** 401 errors from the api_server key — the dispatcher's auth header was malformed for that flow.
+**Correction:** For one-off parallel research, use inline `web_search` / `web_extract` / `terminal` calls in the parent session rather than `delegate_task`. Reserve `delegate_task` for genuinely independent subagent contexts where delegation overhead is justified. Logged as backlog #14.
+
+### Configuration Discovery: PAT rotation cadence
+
+**Date:** 2026-06-25
+**Context:** GitHub PAT was set up with no expiry and no rotation policy. Token lived only in `~/.hermes/.env` template comments — i.e., not actually configured.
+**Change:** Rotate GitHub PATs on a 90-day cadence. Treat tokens pasted into chat as immediately burned — generate a new one and load it directly via `vim ~/.hermes/.env` (not chat).
+**Conclusion:** PAT rotation is now part of the operational checklist for any GitHub-bound workflow.
+
+### Prompt Calibration: "More irons in the fire" GTM framing
+
+**Date:** 2026-06-25
+**Context:** C1 patient-access expansion — initial briefs sequenced opportunities one-at-a-time (BSW → Novant → Sutter).
+**Observation:** Sequenced briefs under-represent the parallel-pilot reality. They also miss opportunities when an earlier gate stalls.
+**Change:** Reframe briefs as parallel pilots with explicit fallback sequencing. Show two paths (parallel V1.5 if pilot accelerates, sequenced V2.5 if it stalls). Don't pretend the gate will close on the original timeline.
+**Result:** Briefs now match how sales actually works — multiple irons in the fire, with each pilot capable of becoming the lead.
+
+---
+
 *This document is a living record. Update it as you learn.*

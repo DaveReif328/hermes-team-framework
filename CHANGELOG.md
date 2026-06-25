@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.3] — 2026-06-25
+
+### Changed
+- `AGENTS.md` — Woz promoted from footnote (#8) to first-class perspective type alongside the other seven
+- `AGENTS.md` — port map updated to 10 agents: added `8650=woz`, `8651=lathrop`, `8652=billy`
+- `AGENTS.md` — standard pipeline now includes Woz as step 5 between Financial and Synthesizer
+- `AGENTS.md` — added "Don't ship engineering claims without Woz" anti-pattern
+- `AGENTS.md` — added "Engineering + Evaluative" pair row to pairing table
+- `learning/agent-tuning-notes.md` — appended operational lessons from April→June (kything, PAT rotation, subagent 401, dream KB, port-binding fallback)
+- `templates/job-template.md` — header note redirecting to the `cronjob` tool as source of truth; template kept for reference only
+
+### Pointers (no file changes)
+- `deploy/setup.sh` — historical; the active pattern is the `hermes-team-agent-systemd-setup` skill, not this script
+- `commands/INTERNAL.md` — superseded by the `team-agent-call`, `kything-prototype`, and `memory-source-attribution` skills
+- New perspectives beyond the eight listed (e.g. domain-specific agents like Alif for KB building) are out of scope for this repo
+
+### Notes
+- This is a **doc-only** release. No code or schema changes.
+- Repo remains a *pattern repository*. It documents the framework shape; your installed agents and skills are the source of truth for current operation.
+
 ## [1.2] — 2026-04-21
 
 ### Added
@@ -17,8 +37,6 @@
 ### Fixed
 - Team agent gateways no longer fail silently after session restart
 
----
-
 ## [1.1] — 2026-04-20
 
 ### Added
@@ -35,8 +53,6 @@
 
 ### Changed
 - README reorganized to show `templates/project/` as the primary quick-start
-
----
 
 ## [1.0] — 2026-04-14
 

@@ -162,5 +162,7 @@ Or asynchronously via shared pool files:
 
 ## Version
 
+**1.3** — Doc refresh: Woz promoted to first-class perspective, port map updated to 10 agents, kything/operational lessons added to tuning notes. 2026-06-25.
+**1.2** — Systemd auto-start (`deploy/systemd/`). 2026-04-21.
 **1.1** — Added project scaffold template (`templates/project/`), 2026-04-20.
 **1.0** — Pattern version, 2026-04-14.

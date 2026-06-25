@@ -1,5 +1,11 @@
 # Hermes Job Template
 
+> **Note (v1.3):** This markdown template is kept for reference. The **source of truth** for cron job configuration is the `cronjob` tool, which writes to `~/.hermes/cron/jobs.json`. Use `cronjob(action='list')` to inspect active jobs and `cronjob(action='create', ...)` to add new ones. Field reference: `name`, `schedule`, `prompt`, `skills`, `deliver`, `enabled_toolsets`, `script`, `model`, `workdir`, `profile`, `context_from`. See the `cron-skill-check` skill for keeping cron definitions aligned with their referenced skills.
+>
+> The fields below map roughly to the `cronjob` tool's parameters, but the tool's prompt is the canonical definition.
+
+---
+
 Standard template for defining jobs within the Hermes Team Framework.
 
 ---

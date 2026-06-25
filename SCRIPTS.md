@@ -1,5 +1,7 @@
 # Hermes Team Scripts Reference
 
+> **Note (v1.3):** Some scripts in this file reference patterns that have moved to skills. See the bottom of this file for the current pointers. The `deploy/setup.sh` script in particular is historical — see the redirect at the bottom.
+
 Operational scripts for managing the Hermes Team Framework.
 
 ## Script Categories
@@ -224,3 +226,17 @@ bash -x ./scripts/knowledge-sync.sh
 2. Follow development standards
 3. Add documentation to this file
 4. Submit for review via PR
+
+---
+
+## Status of Scripts (v1.3)
+
+| Script | Status | Use instead |
+|--------|--------|-------------|
+| `deploy/setup.sh` | **Historical** | `hermes-team-agent-systemd-setup` skill — installs and troubleshoots the systemd gateway target end-to-end |
+| `cron/jobs-configured.yaml` (referenced in this file) | **Historical format** | The `cronjob` tool writes to `~/.hermes/cron/jobs.json`; see `templates/job-template.md` for the redirect |
+| `scripts/agent-status.sh` | **Historical** | Inline: `for p in 8643..8652; do nc -z 127.0.0.1 $p 2>/dev/null && echo "UP  :$p" || echo "DOWN :$p"; done` |
+| `scripts/health-check.sh` | **Active** (port-checking) | Still useful; verifies gateway ports are up before a team project |
+| `deploy/systemd/*` | **Active** | Pattern is correct — `hermes-agent@.service`, `hermes-team.target`, `hermes-team-ctl.sh` are all still the standard install |
+
+The skills superseding the historical scripts are loaded by name from `~/.hermes/skills/` — they include `hermes-team-agent-systemd-setup`, `team-agent-call`, `cron-skill-check`, and `kything-prototype`.
